@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProvaConceito", "ProvaConceito.csproj", "{C00D7EAF-FB74-43B1-8BAC-C48831F11533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProvaConceito", "ProvaConceito.csproj", "{C00D7EAF-FB74-43B1-8BAC-C48831F11533}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProvaConceito.Testes", "ProvaConceito.Testes\ProvaConceito.Testes.csproj", "{70D2ED6A-DFEB-40D2-B241-CA64D797237B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C00D7EAF-FB74-43B1-8BAC-C48831F11533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C00D7EAF-FB74-43B1-8BAC-C48831F11533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C00D7EAF-FB74-43B1-8BAC-C48831F11533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70D2ED6A-DFEB-40D2-B241-CA64D797237B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70D2ED6A-DFEB-40D2-B241-CA64D797237B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70D2ED6A-DFEB-40D2-B241-CA64D797237B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70D2ED6A-DFEB-40D2-B241-CA64D797237B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
