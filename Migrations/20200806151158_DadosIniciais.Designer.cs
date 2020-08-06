@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProvaConceito.Models.Contexto;
 
 namespace ProvaConceito.Migrations
 {
     [DbContext(typeof(JornadaTIContexto))]
-    partial class JornadaTIContextoModelSnapshot : ModelSnapshot
+    [Migration("20200806151158_DadosIniciais")]
+    partial class DadosIniciais
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
