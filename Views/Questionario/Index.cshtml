@@ -1,0 +1,49 @@
+﻿@model QuestionarioViewModels
+<h1 class="text-center">Prova de Conceito Razor - "Buzz Feed"</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div id="conteudoPrincipal">
+            @using (Html.BeginForm("ProcessaQuestionario", "Questionario", FormMethod.Post, new { id = "formQuestionario" }))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                @foreach (var pergunta in Model.Perguntas)
+                                {
+                                    <p class="lead"> @pergunta.Descricao </p>
+                                    <div class="radio">
+                                        @foreach (var resposta in pergunta.Respostas)
+                                        {
+                                            <div class="radio">
+                                                <label>
+                                                    @Html.RadioButton(string.Format("{0}_{1}", "Resposta", pergunta.PerguntaId), resposta.RespostaId.ToString(), new { required = "required", data_perguntaid = pergunta.PerguntaId }) @resposta.Descricao
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">Finalizar</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<br />
+@Html.ActionLink("Refazer", "Index", "Questionario")
+
+
+
+@section Scripts{
+    <script src="~/js/Questionario.js"></script>
+}

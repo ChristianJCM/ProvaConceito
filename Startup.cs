@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProvaConceito.Models.Contexto;
+using ProvaConceito.Models.Repositorios;
 
 namespace ProvaConceito
 {
@@ -24,6 +27,12 @@ namespace ProvaConceito
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            var connectionString = Environment.GetEnvironmentVariable("BDConexao") ?? Configuration.GetConnectionString("BdLocal");
+            services.AddDbContext<JornadaTIContexto>(option => option.UseLazyLoadingProxies().UseSqlServer(connectionString));
+
+            services.AddScoped<IRepositorioPergunta, RepositorioPerguntas>();
+            services.AddScoped<IRepositorioResposta, RepositorioRespostas>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +59,7 @@ namespace ProvaConceito
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Questionario}/{action=Index}/{id?}");
             });
         }
     }

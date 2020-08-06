@@ -1,0 +1,17 @@
+﻿@model ResultadoViewModel
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.SucessoResultado)
+        {
+            <p class="lead bg-success"> A profissão recomendada é : @Model.ProfissaoRecomendada</p>
+        }
+        else
+        {
+            <p class="lead bg-danger"> Ocorreu um erro ao processar o Resultado - Tente novamente </p>
+        }
+    </div>
+</div>
