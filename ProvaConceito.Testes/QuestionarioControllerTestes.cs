@@ -47,6 +47,25 @@ namespace ProvaConceito.Testes
     }
     #endregion
 
+    #region Classe Comparador ResultadoViewModel
+    public class ComparadorResultadoViewModel : EqualityComparer<ResultadoViewModel>
+    {
+        public override bool Equals([AllowNull] ResultadoViewModel x, [AllowNull] ResultadoViewModel y)
+        {
+            if (x == null && y == null) return true;
+            if (x == null || y == null) return false;
+            if (x != null && y != null) return x.SucessoResultado == y.SucessoResultado && x.ProfissaoRecomendada == y.ProfissaoRecomendada;
+            return false;
+        }
+
+        public override int GetHashCode([DisallowNull] ResultadoViewModel obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+    #endregion
+
+
     #region Testes QuestionarioController
 
     public class QuestionarioControllerTestes
@@ -136,6 +155,68 @@ namespace ProvaConceito.Testes
 
             // Assert
             Assert.Equal(viewModelEsperado, viewModelAtual, new ComparadorQuestionarioViewModel());
+        }
+
+        [Fact]
+        public void ProcessaQuestionario_ViewModelInvalido_RetornaViewResultComViewModelResultadoFalso()
+        {
+            // Arrange
+            var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
+            var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
+
+            QuestionarioController questionarioController = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
+            questionarioController.ModelState.AddModelError("viewModel", "O ViewModel deve ser especificado");
+
+            ResultadoViewModel viewModelRespostaEsperado = new ResultadoViewModel() { SucessoResultado = false };
+
+            RespostasQuestionarioViewModel viewModel = null;
+
+            // Act
+            IActionResult resposta = questionarioController.ProcessaQuestionario(viewModel);
+
+            ViewResult viewResult = (ViewResult)resposta;
+            ResultadoViewModel viewModelRespostaAtual = (ResultadoViewModel)viewResult.Model;
+
+            // Assert
+            Assert.Equal(viewModelRespostaEsperado, viewModelRespostaAtual, new ComparadorResultadoViewModel());
+        }
+
+        [Fact]
+        public void ProcessaQuestionario_ViewModelValido_RetornaViewResultComViewModelResultadoSucesso()
+        {
+            // Arrange
+            var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
+            var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
+
+            Profissao profissaoA = new Profissao { Id = 1, Descricao = "Profissão A" };
+            Profissao profissaoB = new Profissao { Id = 2, Descricao = "Profissão B" };
+
+            List<Resposta> listaRespostas = new List<Resposta>();
+            listaRespostas.Add(new Resposta() { Id = 1, PerguntaId = 1, Texto = "Resposta 1-1", Profissao = profissaoA });
+            listaRespostas.Add(new Resposta() { Id = 2, PerguntaId = 1, Texto = "Resposta 1-2", Profissao = profissaoB });
+            listaRespostas.Add(new Resposta() { Id = 3, PerguntaId = 2, Texto = "Resposta 2-1", Profissao = profissaoA });
+            listaRespostas.Add(new Resposta() { Id = 4, PerguntaId = 2, Texto = "Resposta 2-2", Profissao = profissaoB });
+
+            mockRepositorioRespostas.Setup(repositorio => repositorio.GetResposta(It.IsAny<int>())).Returns((int id) => listaRespostas.FirstOrDefault(resposta => resposta.Id == id));
+
+            QuestionarioController questionarioController = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
+            ResultadoViewModel viewModelRespostaEsperado = new ResultadoViewModel() { SucessoResultado = true, ProfissaoRecomendada = profissaoA.Descricao };
+
+            RespostasQuestionarioViewModel viewModel = new RespostasQuestionarioViewModel()
+            {
+                Respostas = new List<RespostaPostViewModel>{
+                            new RespostaPostViewModel { PerguntaId = 1, RespostaId = 1},
+                            new RespostaPostViewModel { PerguntaId = 2, RespostaId = 3}}
+            };
+
+            // Act
+            IActionResult resposta = questionarioController.ProcessaQuestionario(viewModel);
+
+            ViewResult viewResult = (ViewResult)resposta;
+            ResultadoViewModel viewModelRespostaAtual = (ResultadoViewModel)viewResult.Model;
+
+            // Assert
+            Assert.Equal(viewModelRespostaEsperado, viewModelRespostaAtual, new ComparadorResultadoViewModel());
         }
     }
     #endregion
