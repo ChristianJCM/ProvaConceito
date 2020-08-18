@@ -65,38 +65,33 @@ namespace ProvaConceito.Testes
     }
     #endregion
 
+    #region Dados para Teste - QuestionarioController
+
+    public static class DadosTeste_QuestionarioController
+    {
+        public static IEnumerable<object[]> DadosTeste_Index()
+        {
+            return new List<object[]> {
+                new object[] { DadosTestePergunta.GetListaPerguntasExemploContendoRespostasExemplo() },
+                new object[] { new List<Pergunta>() }
+            };
+        }
+    }
+    #endregion
 
     #region Testes QuestionarioController
 
     public class QuestionarioControllerTestes
     {
-        [Fact]
-        public void Index_RepositoriosVazios_RetornaResultadoTipoViewResult()
+        [Theory]
+        [MemberData(nameof(DadosTeste_QuestionarioController.DadosTeste_Index), MemberType = typeof(DadosTeste_QuestionarioController))]
+        public void Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaResultadoTipoViewResult(IList<Pergunta> listaPerguntasRepositorioPerguntas)
         {
             // Arrange
             var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
             var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
 
-            // Act
-            QuestionarioController controller = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
-            var resposta = controller.Index();
-
-            // Assert
-            Assert.IsType<ViewResult>(resposta);
-        }
-
-        [Fact]
-        public void Index_RepositorioPerguntasPreenchido_RetornaResultadoTipoViewResult()
-        {
-            // Arrange
-            var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
-            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(
-                new List<Pergunta> {
-                    new Pergunta { Id = 1, Descricao = "Pergunta 1", Respostas = new List<Resposta>{new Resposta { Id = 1, PerguntaId = 1, Texto = "Resposta 1-1" }, new Resposta() { Id = 2, PerguntaId = 1, Texto = "Resposta 1-2" }} },
-                    new Pergunta { Id = 2, Descricao = "Pergunta 2", Respostas = new List<Resposta>{new Resposta { Id = 3, PerguntaId = 2, Texto = "Resposta 2-1" }, new Resposta() { Id = 4, PerguntaId = 2, Texto = "Resposta 2-2" }} }
-                    });
-
-            var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
+            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(listaPerguntasRepositorioPerguntas);
 
             // Act
             QuestionarioController controller = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
@@ -111,11 +106,7 @@ namespace ProvaConceito.Testes
         {
             // Arrange
             var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
-            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(
-                new List<Pergunta> {
-                    new Pergunta { Id = 1, Descricao = "Pergunta 1", Respostas = new List<Resposta>{new Resposta { Id = 1, PerguntaId = 1, Texto = "Resposta 1-1" }, new Resposta() { Id = 2, PerguntaId = 1, Texto = "Resposta 1-2" }} },
-                    new Pergunta { Id = 2, Descricao = "Pergunta 2", Respostas = new List<Resposta>{new Resposta { Id = 3, PerguntaId = 2, Texto = "Resposta 2-1" }, new Resposta() { Id = 4, PerguntaId = 2, Texto = "Resposta 2-2" }} }
-                    });
+            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(DadosTestePergunta.GetListaPerguntasExemploContendoRespostasExemplo());
 
             var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
 
