@@ -69,11 +69,25 @@ namespace ProvaConceito.Testes
 
     public static class DadosTeste_QuestionarioController
     {
-        public static IEnumerable<object[]> DadosTeste_Index()
+        public static IEnumerable<object[]> DadosTeste_Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaResultadoTipoViewResult()
         {
             return new List<object[]> {
                 new object[] { DadosTestePergunta.GetListaPerguntasExemploContendoRespostasExemplo() },
                 new object[] { new List<Pergunta>() }
+            };
+        }
+
+        public static IEnumerable<object[]> DadosTeste_Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaViewResultComViewModel()
+        {
+            return new List<object[]>
+            {
+                new object[] {
+                    DadosTestePergunta.GetListaPerguntasExemploContendoRespostasExemplo(),
+                    new QuestionarioViewModels(){Perguntas = new List<PerguntaViewModel> {new PerguntaViewModel{ PerguntaId = 1, Descricao = "Pergunta 1"  },new PerguntaViewModel{ PerguntaId = 2, Descricao = "Pergunta 2" }} }
+                },
+                new object[] {
+                    new List<Pergunta> { },
+                    new QuestionarioViewModels(){Perguntas = new List<PerguntaViewModel> { }} }
             };
         }
     }
@@ -84,7 +98,7 @@ namespace ProvaConceito.Testes
     public class QuestionarioControllerTestes
     {
         [Theory]
-        [MemberData(nameof(DadosTeste_QuestionarioController.DadosTeste_Index), MemberType = typeof(DadosTeste_QuestionarioController))]
+        [MemberData(nameof(DadosTeste_QuestionarioController.DadosTeste_Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaResultadoTipoViewResult), MemberType = typeof(DadosTeste_QuestionarioController))]
         public void Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaResultadoTipoViewResult(IList<Pergunta> listaPerguntasRepositorioPerguntas)
         {
             // Arrange
@@ -101,43 +115,15 @@ namespace ProvaConceito.Testes
             Assert.IsType<ViewResult>(resposta);
         }
 
-        [Fact]
-        public void Index_RepositorioPerguntasPreenchido_RetornaViewResultComViewModel()
+        [Theory]
+        [MemberData(nameof(DadosTeste_QuestionarioController.DadosTeste_Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaViewResultComViewModel), MemberType = typeof(DadosTeste_QuestionarioController))]
+        public void Index_DiferentesConfiguracoesRepositorioPerguntas_RetornaViewResultComViewModel(IList<Pergunta> listaRepositorioPerguntas, QuestionarioViewModels viewModelEsperado)
         {
             // Arrange
             var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
-            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(DadosTestePergunta.GetListaPerguntasExemploContendoRespostasExemplo());
+            mockRepositorioPerguntas.Setup(config => config.GetPerguntas()).Returns(listaRepositorioPerguntas);
 
             var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
-
-            QuestionarioViewModels viewModelEsperado = new QuestionarioViewModels()
-            {
-                Perguntas = new List<PerguntaViewModel> {
-                    new PerguntaViewModel{ PerguntaId = 1, Descricao = "Pergunta 1"  },
-                    new PerguntaViewModel{ PerguntaId = 2, Descricao = "Pergunta 2" },
-                }
-            };
-
-            // Act
-            QuestionarioController controller = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
-            ViewResult viewResult = (ViewResult)controller.Index();
-            QuestionarioViewModels viewModelAtual = (QuestionarioViewModels)viewResult.Model;
-
-            // Assert
-            Assert.Equal(viewModelEsperado, viewModelAtual, new ComparadorQuestionarioViewModel());
-        }
-
-        [Fact]
-        public void Index_RepositoriosVazios_RetornaViewResultComViewModel()
-        {
-            // Arrange
-            var mockRepositorioPerguntas = new Mock<IRepositorioPergunta>();
-            var mockRepositorioRespostas = new Mock<IRepositorioResposta>();
-
-            QuestionarioViewModels viewModelEsperado = new QuestionarioViewModels()
-            {
-                Perguntas = new List<PerguntaViewModel>() { }
-            };
 
             // Act
             QuestionarioController controller = new QuestionarioController(mockRepositorioPerguntas.Object, mockRepositorioRespostas.Object);
